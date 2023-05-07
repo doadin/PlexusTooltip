@@ -12,4 +12,6 @@
 ## X-Curse-credits-former-author: Julith@EU-Perenolde
 ## X-Curse-Project-ID: 299850
 
+## IconTexture: Interface\AddOns\Plexus\Media\icon
+
 PlexusTooltip.lua
