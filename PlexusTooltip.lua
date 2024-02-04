@@ -31,42 +31,60 @@ PlexusTooltip.options = {
 local lastMouseOverFrame
 
 local function FindTooltipDebuff(unit, texture, index)
-    local index = index or 1 --luacheck: ignore 412
-    local i = 0
-    --search from the last index the texture was found to the left and right for the texture
-    local name, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index) --luacheck: ignore 631
-    while name or index - i > 1 do
-        if icon == texture then
-            return index + i, spellId
+    if _G.Plexus:IsRetailWow() then
+        for i=0,40 do
+            local auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
+            if auraData and auraData.icon == texture then
+                return i, auraData.spellId
+            end
         end
-        i = i + 1
-        _, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index - i) --luacheck: ignore 631
-        if icon == texture then
-            return index - i, spellId
+        return nil
+    else
+        local index = index or 1 --luacheck: ignore 412
+        local i = 0
+        --search from the last index the texture was found to the left and right for the texture
+        local name, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index) --luacheck: ignore 631
+        while name or index - i > 1 do
+            if icon == texture then
+                return index + i, spellId
+            end
+            i = i + 1
+            _, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index - i) --luacheck: ignore 631
+            if icon == texture then
+                return index - i, spellId
+            end
+            name, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index + i) --luacheck: ignore 631
         end
-        name, icon, _, _, _, _, _, _, _, spellId = UnitDebuff(unit, index + i) --luacheck: ignore 631
+        return nil
     end
-
-    return nil
 end
 
 local function FindTooltipBuff(unit, texture, index)
-    local index = index or 1 --luacheck: ignore 412
-    local i = 0
-    local name, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index) --luacheck: ignore 631
-    while name or index - i > 1 do
-        if icon == texture then
-            return index + i, spellId
+    if _G.Plexus:IsRetailWow() then
+        for i=0,40 do
+            local auraData = C_UnitAuras.GetBuffDataByIndex(unit, i)
+            if auraData and auraData.icon == texture then
+                return i, auraData.spellId
+            end
         end
-        i = i + 1
-        _, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index - i) --luacheck: ignore 631
-        if icon == texture then
-            return index - i, spellId
+        return nil
+    else
+        local index = index or 1 --luacheck: ignore 412
+        local i = 0
+        local name, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index) --luacheck: ignore 631
+        while name or index - i > 1 do
+            if icon == texture then
+                return index + i, spellId
+            end
+            i = i + 1
+            _, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index - i) --luacheck: ignore 631
+            if icon == texture then
+                return index - i, spellId
+            end
+            name, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index + i) --luacheck: ignore 631
         end
-        name, icon, _, _, _, _, _, _, _, spellId = UnitBuff(unit, index + i) --luacheck: ignore 631
+        return nil
     end
-
-    return nil
 end
 
 function PlexusTooltip.SetIndicator(frame, indicator, _, _, _, _, texture, _, _, _)
