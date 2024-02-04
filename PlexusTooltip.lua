@@ -1,15 +1,7 @@
 local UnitBuff = UnitBuff --luacheck: ignore 113
 local UnitDebuff = UnitDebuff --luacheck: ignore 113
-local GridFrame
-local PlexusTooltip
-if (IsAddOnLoaded("Plexus")) then --luacheck: ignore 113
-    GridFrame = Plexus:GetModule("PlexusFrame") --luacheck: ignore 113
-    PlexusTooltip = Plexus:NewModule("PlexusTooltip") --luacheck: ignore 113
-end
-if (IsAddOnLoaded("Grid")) then --luacheck: ignore 113
-    GridFrame = Grid:GetModule("GridFrame") --luacheck: ignore 113
-    PlexusTooltip = Grid:NewModule("PlexusTooltip") --luacheck: ignore 113
-end
+local PlexusFrame = Plexus:GetModule("PlexusFrame") --luacheck: ignore 113
+local PlexusTooltip = Plexus:NewModule("PlexusTooltip") --luacheck: ignore 113
 
 PlexusTooltip.defaultDB = {
     enabledIndicators = {
@@ -153,12 +145,12 @@ end
 
 function PlexusTooltip:OnInitialize()
     if not self.db then
-        self.db = Grid.db:RegisterNamespace(self.moduleName, { profile = self.defaultDB or { } }) --luacheck: ignore 113
+        self.db = _G.Plexus.db:RegisterNamespace(self.moduleName, { profile = self.defaultDB or { } }) --luacheck: ignore 113
     end
 
     PlexusTooltip.knownIndicators = {}
 
-    GridFrame:RegisterIndicator("tooltip", "Tooltip dummy. Do not use!",
+    PlexusFrame:RegisterIndicator("tooltip", "Tooltip dummy. Do not use!",
         function(frame)
             PlexusTooltip.CreateFrames(nil, frame)
             return {}
@@ -170,7 +162,7 @@ function PlexusTooltip:OnInitialize()
                 if not PlexusTooltip.knownIndicators[id] then
                     PlexusTooltip.options.args[id] = {
                         name = id,
-                        desc = "Display tooltip for indicator: "..GridFrame.indicators[id].name,
+                        desc = "Display tooltip for indicator: "..PlexusFrame.indicators[id].name,
                         order = 60, width = "double",
                         type = "toggle",
                         get = function()
@@ -190,8 +182,8 @@ function PlexusTooltip:OnInitialize()
         function()
         end
     )
-    hooksecurefunc(GridFrame.prototype, "SetIndicator", PlexusTooltip.SetIndicator) --luacheck: ignore 113
-    hooksecurefunc(GridFrame.prototype, "ClearIndicator", PlexusTooltip.ClearIndicator) --luacheck: ignore 113
+    hooksecurefunc(PlexusFrame.prototype, "SetIndicator", PlexusTooltip.SetIndicator) --luacheck: ignore 113
+    hooksecurefunc(PlexusFrame.prototype, "ClearIndicator", PlexusTooltip.ClearIndicator) --luacheck: ignore 113
 end
 
 function PlexusTooltip:OnEnable() --luacheck: ignore 212
